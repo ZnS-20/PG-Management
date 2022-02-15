@@ -1,0 +1,22 @@
+package com.example.PG.Management.Admin.Controller;
+
+import com.example.PG.Management.Admin.Entity.Users;
+import com.example.PG.Management.Admin.Service.AdminService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+@RestController
+public class AdminController {
+
+    @Autowired
+
+    private AdminService adminService;
+
+    @GetMapping("/getUsers")
+    List<Users> getAllUsers(){
+        return adminService.fetchUsersList();
+    }
+}
