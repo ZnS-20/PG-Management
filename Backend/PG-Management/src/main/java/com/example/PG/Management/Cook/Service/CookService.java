@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface CookService {
 
-    List<Orders> getAllOrders(Date orderDate);
+    List<Object> getAllOrders(Date orderDate, int whenOrder);
 
 }

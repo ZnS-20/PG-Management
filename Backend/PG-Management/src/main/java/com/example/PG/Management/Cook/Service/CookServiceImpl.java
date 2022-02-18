@@ -15,7 +15,7 @@ public class CookServiceImpl implements CookService{
     private OrdersInterface ordersInterface;
 
     @Override
-    public List<Orders> getAllOrders(Date orderDate) {
-        return (List<Orders>) ordersInterface.findOrdersByDate(orderDate);
+    public List<Object> getAllOrders(Date orderDate, int whenOrder) {
+        return (List<Object>) ordersInterface.findOrdersByDate(orderDate,Integer.valueOf(whenOrder));
     }
 }

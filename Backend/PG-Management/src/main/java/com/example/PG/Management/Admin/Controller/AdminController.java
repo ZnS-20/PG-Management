@@ -1,9 +1,12 @@
 package com.example.PG.Management.Admin.Controller;
 
+import com.example.PG.Management.Admin.Entity.Menu;
 import com.example.PG.Management.Admin.Entity.Users;
 import com.example.PG.Management.Admin.Service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -19,4 +22,10 @@ public class AdminController {
     List<Users> getAllUsers(){
         return adminService.fetchUsersList();
     }
+
+    @PostMapping("/addMenu")
+    void addMenu(@RequestBody Menu menu){
+        adminService.addMenu(menu);
+    }
+
 }

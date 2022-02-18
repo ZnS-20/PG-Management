@@ -1,5 +1,6 @@
 package com.example.PG.Management.Cook.Entity;
 
+import com.example.PG.Management.Admin.Entity.Menu;
 import com.example.PG.Management.Admin.Entity.Users;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,13 +21,13 @@ public class Orders {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @Column(name = "itemName")
-    private String itemName;
-    @Column(name = "portion")
-    private String portion;
+    @ManyToOne
+    private Menu menu;
     @Column(name = "orderDate")
     private Date orderDate;
     @ManyToOne
     @JoinColumn(name = "userId")
     private Users userId;
+    @Column(name = "whenOrder")
+    private Integer whenOrder;
 }
