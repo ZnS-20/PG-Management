@@ -23,9 +23,18 @@ public class Users {
     private String firstName;
     @Column(name = "lastName")
     private String lastName;
-    @Column(name = "userName", unique = true)
+    @Column(name = "userName", unique = true, nullable = false)
     private String userName;
+    @Column(name = "email", nullable = false)
+    private String email;
+    @Column(name = "phone", nullable = false)
+    private long phoneNumber;
+    private boolean status;
+    @Column(name = "password", nullable = false)
+    private String password;
     @Column(name = "createdDate")
     private Date createdDate;
+    @Column(name = "modifiedDate")
+    private Date modifiedDate;
 
 }
