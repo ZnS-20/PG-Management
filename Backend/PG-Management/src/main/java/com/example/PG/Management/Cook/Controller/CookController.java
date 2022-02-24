@@ -20,7 +20,7 @@ public class CookController {
     private CookService cookService;
 
     @GetMapping("/getOrders")
-    public List<Object> getOrders(@RequestParam String date,@RequestParam int whenOrder){
+    public List<Orders> getOrders(@RequestParam String date,@RequestParam int whenOrder){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy", Locale.ENGLISH);
         LocalDate formattedDate = LocalDate.parse(date, formatter);
         Date finalDate = Date.from(formattedDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
