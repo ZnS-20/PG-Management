@@ -18,7 +18,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    @RequestMapping(value = "/login", method = RequestMethod.POST, consumes = "application/json")
     public ResponseEntity<Users> login(@RequestParam String username, String password){
         if(username == null)
             return new ResponseEntity<>(new Users(), HttpStatus.BAD_REQUEST);

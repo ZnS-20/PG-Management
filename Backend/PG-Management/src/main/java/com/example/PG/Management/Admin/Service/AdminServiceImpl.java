@@ -36,6 +36,7 @@ public class AdminServiceImpl implements AdminService{
             usersRepository.save(user);
             return ResponseEntity.ok("Successfully Inserted");
         }catch (Exception e){
+            System.out.println(e.getMessage());
             return ResponseEntity.badRequest().body("Cannot Insert Record");
         }
     }

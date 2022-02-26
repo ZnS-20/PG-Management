@@ -36,5 +36,7 @@ public class Users {
     private Date createdDate;
     @Column(name = "modifiedDate")
     private Date modifiedDate;
+    @Column(name = "sxPoints")
+    private int sxPoints;
 
 }

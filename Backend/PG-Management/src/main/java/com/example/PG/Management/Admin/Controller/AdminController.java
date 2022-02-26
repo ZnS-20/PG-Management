@@ -22,7 +22,7 @@ public class AdminController {
     }
 
 
-    @RequestMapping(value = "/addUser", method = RequestMethod.POST)
+    @RequestMapping(value = "/addUser", method = RequestMethod.POST, consumes="application/json")
     public ResponseEntity<String> addUser(@RequestBody Users user){
         ResponseEntity<String> responseEntity = null;
         if(user == null)
@@ -49,7 +49,7 @@ public class AdminController {
         return responseEntity;
     }
 
-    @RequestMapping(value = "/addMenu", method = RequestMethod.POST)
+    @RequestMapping(value = "/addMenu", method = RequestMethod.POST, consumes = "application/json")
     void addMenu(@RequestBody Menu menu){
         adminService.addMenu(menu);
     }
