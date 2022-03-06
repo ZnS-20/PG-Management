@@ -63,4 +63,10 @@ public class UserServiceImp implements UserService {
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
+
+    @Override
+    public ResponseEntity<List<Menu>> getMenuByCategory(String category) {
+        List<Menu> menu = menuRepository.findByCategory_Category(category);
+        return ResponseEntity.ok(menu);
+    }
 }

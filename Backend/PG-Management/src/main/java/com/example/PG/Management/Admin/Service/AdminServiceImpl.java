@@ -10,8 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class AdminServiceImpl implements AdminService{
@@ -105,6 +104,12 @@ public class AdminServiceImpl implements AdminService{
     public boolean getMenuById(int dataStoreId) {
         Optional<Menu> menu = menuRepository.findById(dataStoreId);
         return (menu == null || !menu.isPresent())?false:true;
+    }
+
+    @Override
+    public List<Orders> getUserOrders(Date finalDate, String userId, int whenOrder) {
+        List<Orders> orders = ordersInterface.findByOrderDateAndWhenOrderAndUserId_UserId(finalDate,Integer.valueOf(whenOrder),Integer.parseInt(userId));
+        return orders;
     }
 
 }

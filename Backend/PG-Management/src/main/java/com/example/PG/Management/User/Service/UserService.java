@@ -14,4 +14,6 @@ public interface UserService {
     ResponseEntity<String> orderFood(Orders order);
 
     ResponseEntity<Users> login(String username, String password);
+
+    ResponseEntity<List<Menu>> getMenuByCategory(String category);
 }

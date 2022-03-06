@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -17,6 +18,7 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
 
     @RequestMapping(value = "/login", method = RequestMethod.POST, consumes = "application/json")
     public ResponseEntity<Users> login(@RequestParam String username, String password){
@@ -36,6 +38,13 @@ public class UserController {
         if(order == null)
             return ResponseEntity.badRequest().body("Invalid Order: EMPTY");
         return userService.orderFood(order);
+    }
+
+    @RequestMapping(value = "/getMenuByCategory", method = RequestMethod.GET)
+    public ResponseEntity<List<Menu>> getMenuByCategory(@RequestParam String category){
+        if(category== null)
+            return ResponseEntity.badRequest().body(new ArrayList<>());
+        return userService.getMenuByCategory(category);
     }
 
 

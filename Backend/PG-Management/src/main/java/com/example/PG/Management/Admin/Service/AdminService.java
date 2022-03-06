@@ -3,8 +3,10 @@ package com.example.PG.Management.Admin.Service;
 
 import com.example.PG.Management.Admin.Entity.Menu;
 import com.example.PG.Management.Admin.Entity.Users;
+import com.example.PG.Management.Cook.Entity.Orders;
 import org.springframework.http.ResponseEntity;
 
+import java.util.Date;
 import java.util.List;
 
 public interface AdminService {
@@ -27,4 +29,6 @@ public interface AdminService {
     ResponseEntity<String> updateMenuItem(Menu menu);
 
     boolean getMenuById(int dataStoreId);
+
+    List<Orders> getUserOrders(Date finalDate, String userId, int whenOrder);
 }

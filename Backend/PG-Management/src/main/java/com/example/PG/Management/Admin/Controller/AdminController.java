@@ -3,11 +3,17 @@ package com.example.PG.Management.Admin.Controller;
 import com.example.PG.Management.Admin.Entity.Menu;
 import com.example.PG.Management.Admin.Entity.Users;
 import com.example.PG.Management.Admin.Service.AdminService;
+import com.example.PG.Management.Cook.Entity.Orders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 @RestController
 public class AdminController {
@@ -19,6 +25,14 @@ public class AdminController {
     @RequestMapping(value = "/getUserList", method = RequestMethod.GET)
     List<Users> getAllUsers(){
         return adminService.fetchUsersList();
+    }
+
+    @RequestMapping(value = "/getUserOrders", method = RequestMethod.GET)
+    List<Orders> getUserOrders(@RequestParam String date, @RequestParam String userId, @RequestParam int whenOrder){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy", Locale.ENGLISH);
+        LocalDate formattedDate = LocalDate.parse(date, formatter);
+        Date finalDate = Date.from(formattedDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        return adminService.getUserOrders(finalDate, userId, whenOrder);
     }
 
 

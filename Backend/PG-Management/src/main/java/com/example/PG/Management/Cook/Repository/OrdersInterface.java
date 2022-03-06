@@ -14,6 +14,8 @@ public interface OrdersInterface extends JpaRepository<Orders,Integer> {
 
     List<Orders> findByOrderDateAndWhenOrder(@Param("orderDate")Date orderDate, @Param("whenOrder")Integer whenOrder);
 
+    List<Orders> findByOrderDateAndWhenOrderAndUserId_UserId(@Param("orderDate")Date orderDate, @Param("whenOrder")Integer whenOrder, @Param("userId")int userId);
+
     List<Orders> findByMenu_Id(int dataStoreId);
 
     List<Orders> findByUserId_UserId(int userId);
