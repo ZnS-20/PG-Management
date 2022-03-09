@@ -13,11 +13,15 @@ const Login = ({ navigation }) => {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' }
         };
-        fetch('http://13.233.138.70:8080/login?username=react1@test.com&password=tempPass', requestOptions)
+        fetch(`http://13.233.138.70:8080/login?username=${username}&password=${password}`, requestOptions)
             .then(response => response.json())
             .then(data => {
                 setLoading(false);
-                navigation.navigate('SmartXLiving', { userData: data });
+                navigation.navigate({
+                    name: 'SmartXLiving',
+                    params: { userData: data },
+                    merge: true
+                });
             })
             .catch(error => {
                 setLoading(false);

@@ -7,13 +7,37 @@ const Home = ({ navigation, route }) => {
     const [category, setCategory] = useState("Chicken");
     const [data, setData] = useState([]);
     const [orders, setOrders] = useState([]);
+    const [loading, setLoading] = useState(false);
+
+
+
+
+    addQuantity = (json) => {
+        for (let i = 0; i < json.length; i++) {
+            Object.assign(json[i], { quantity: 0 });
+        }
+        return json;
+    }
 
     useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+            setOrders([]);
+            setLoading(true);
+            setCategory("Chicken")
+            fetch(`http://13.233.138.70:8080/getMenuByCategory?category=Chicken`)
+                .then((response) => response.json())
+                .then((json) => { setData(addQuantity(json)); setLoading(false) })
+                .catch((error) => console.log(error))
+        });
+
+        setLoading(true);
         fetch(`http://13.233.138.70:8080/getMenuByCategory?category=${category}`)
             .then((response) => response.json())
-            .then((json) => setData(json))
+            .then((json) => { setData(addQuantity(json)); setLoading(false) })
             .catch((error) => console.log(error))
-    }, [category]);
+        return unsubscribe;
+    }, [category, navigation]);
+
 
     const foodCategory = [
         { id: 1, title: "Chicken" }, { id: 2, title: "Paneer" }, { id: 3, title: "Chaap" }, { id: 4, title: "Eggs" },
@@ -22,13 +46,19 @@ const Home = ({ navigation, route }) => {
         { id: 10, title: "Soup, Sides, Snack, Sweets & Cold Drink" }
     ];
 
+    const removeNullOrders = () => {
+        const filteredOrders = orders.filter(function (e) {
+            return e.quantity > 0;
+        })
+        console.log("In filteredOrders");
+        console.log(filteredOrders);
+        return filteredOrders;
+    }
+
     const checkIfContains = (data) => {
-        console.log("inside check");
         for (let i = 0; i < orders.length; i++) {
 
             if (orders[i].menu === data.menu) {
-
-                data.quantity = orders[i].quantity + 1;
                 setOrders((orders) => orders.filter((order) => order.menu !== data.menu))
                 console.log(data.quantity)
                 return true
@@ -38,13 +68,17 @@ const Home = ({ navigation, route }) => {
     }
 
     const addOrders = (item) => {
+        item.quantity = item.quantity + 1;
         let data =
         {
             "userId": userData.userId,
             "menu": item.id,
-            "orderDate": new Date(),
+            "orderDate": new Date().toISOString().split('T')[0],
             "whenOrder": 0,
-            "quantity": 1
+            "quantity": item.quantity,
+            "itemName": item.item,
+            "portion": item.portion,
+            "sxPoints": item.sxPoints
         }
 
         if (checkIfContains(data)) {
@@ -52,6 +86,36 @@ const Home = ({ navigation, route }) => {
         } else {
             setOrders(oldArray => [...oldArray, data]);
         }
+        setOrders((orders) => orders.filter(order => JSON.stringify(order) !== '{}'));
+    }
+
+    const reduceQuantity = (item) => {
+        if (item.quantity <= 0) {
+            alert("Quantity cannot be less than 0");
+            return;
+        }
+        item.quantity = item.quantity - 1;
+        let data =
+        {
+            "userId": userData.userId,
+            "menu": item.id,
+            "orderDate": new Date().toISOString().split('T')[0],
+            "whenOrder": 0,
+            "quantity": item.quantity,
+            "itemName": item.item,
+            "portion": item.portion,
+            "sxPoints": item.sxPoints
+        }
+
+        if (checkIfContains(data)) {
+            if (item.quantity <= 0) {
+                data = {};
+            }
+            setOrders(oldArray => [...oldArray, data]);
+        } else {
+            setOrders(oldArray => [...oldArray, data]);
+        }
+        setOrders((orders) => orders.filter(order => JSON.stringify(order) !== '{}'))
     }
 
     const renderCategory = ({ item }) => {
@@ -70,20 +134,27 @@ const Home = ({ navigation, route }) => {
                 <View style={{ width: '45%' }}>
                     <Text> {item.item} </Text>
                 </View>
-                <View style={{ width: '35%' }}>
+                <View style={{ width: '25%' }}>
                     <Text> {item.portion} </Text>
                 </View>
                 <View style={{ width: '10%' }}>
                     <Text> {item.sxPoints} </Text>
                 </View>
-                <TouchableOpacity onPress={() => addOrders(item)}>
-                    <View>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    {item.quantity > 0 ? <>
+                        <TouchableOpacity onPress={() => reduceQuantity(item)}>
+                            <Text style={{ fontSize: 30 }}> - </Text>
+                        </TouchableOpacity>
+                        <Text> {item.quantity} </Text>
+                    </> : <></>}
+                    <TouchableOpacity onPress={() => addOrders(item)}>
                         <Text style={{ fontSize: 30 }}> + </Text>
-                    </View>
-                </TouchableOpacity>
+                    </TouchableOpacity>
+                </View>
             </View>
         )
     }
+
 
     return (
         <SafeAreaView style={styles.container}>
@@ -97,24 +168,29 @@ const Home = ({ navigation, route }) => {
                     horizontal={true}
                     data={foodCategory}
                     renderItem={renderCategory}
-                    keyExtractor={(item) => item.id}
+                    keyExtractor={(item) => { return item.id.toString() }}
                 />
             </View>
-            <View style={styles.titleView}>
-                <Text style={styles.categoryTitle}>{category}</Text>
-            </View>
-            <View style={{ width: '96%', height: '55%' }}>
-                <FlatList
-                    data={data}
-                    renderItem={renderMenu}
-                    keyExtractor={(item) => item.id}
-                />
-            </View>
+            {loading ? (<ActivityIndicator />) : (<>
+                <View style={styles.titleView}>
+                    <Text style={styles.categoryTitle}>{category}</Text>
+                </View>
+                <View style={{ width: '96%', height: '55%' }}>
+                    <FlatList
+                        data={data}
+                        renderItem={renderMenu}
+                        keyExtractor={(item) => { return item.id.toString() }}
+                    />
+                </View>
+            </>)}
             <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', margin: 10, width: '98%' }}
                 disabled={orders.length == 0 ? true : false}
-                onPress={() => console.log(orders)}>
+                onPress={() => {
+                    console.log(orders);
+                    navigation.navigate('Review and Confirm Choice', { userData: userData, orders: orders });
+                }}>
                 <View style={styles.titleView}>
-                    <Text style={{ fontSize: 20, textAlign: 'center', fontWeight: 'bold' }}>Review &amp; Place Order</Text>
+                    <Text style={{ fontSize: 20, textAlign: 'center', fontWeight: 'bold' }}>Review &amp; Confirm Choice</Text>
                 </View>
             </TouchableOpacity>
         </SafeAreaView >
@@ -154,15 +230,16 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         height: 60,
-        width: '100%',
+        width: '95%',
         backgroundColor: '#fff',
-        margin: 10
+        margin: 10,
+
     },
     menuItem: {
-        margin: 10,
+        margin: 2,
+        marginLeft: 10,
         backgroundColor: '#fff',
         flexDirection: 'row',
-        width: '100%',
         height: 40,
         alignItems: 'center',
     },
