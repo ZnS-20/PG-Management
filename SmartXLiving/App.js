@@ -5,6 +5,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Login from './Screens/Login';
 import Home from './Screens/Home';
 import OrderandReview from './Screens/OrderandReview';
+import AllOrders from './Screens/AllOrders';
 
 export default function App() {
 
@@ -16,6 +17,7 @@ export default function App() {
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="SmartXLiving" component={Home} />
         <Stack.Screen name="Review and Confirm Choice" component={OrderandReview} />
+        <Stack.Screen name="Previous Choices" component={AllOrders} />
       </Stack.Navigator>
     </NavigationContainer>
   );

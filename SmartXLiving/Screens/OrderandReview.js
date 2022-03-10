@@ -13,6 +13,7 @@ const OrderandReview = ({ navigation, route }) => {
     const [order, setOrder] = useState(orders);
     const [show, setShow] = useState(false);
     const minDate = new Date(new Date().getTime() + (330 * 60 * 1000) + (1000 * 60 * 60 * 24));
+    const [userOrders, setUserOrders] = useState([]);
 
     useEffect(() => {
         let total = 0;
@@ -22,11 +23,92 @@ const OrderandReview = ({ navigation, route }) => {
         setTotal(total);
     }, [order])
 
-    const checkOrders = () => {
-        console.log(whenOrder);
+    useEffect(() => {
+        let formattedDate = (date.toISOString().split('T')[0]).split('-').reverse().join('-');
+        fetch(`http://13.233.138.70:8080/getOrdersByUserIdAndDate?userId=${userData.userId}&date=${formattedDate}`)
+            .then((response) => response.json())
+            .then((json) => { setUserOrders(json) })
+            .catch((error) => console.log(error))
+    }, [date])
+
+
+    const placeOrder = () => {
+        let finalOrders = [];
+        order.forEach(element => {
+            let data = {
+                "menu": {
+                    "id": element.menu
+                },
+                "orderDate": date.toISOString().split('T')[0],
+                "userId": {
+                    "userId": userData.userId
+                },
+                "whenOrder": whenOrder,
+                "quantity": element.quantity
+            };
+            finalOrders.push(data);
+        });
+        let updateUser = {
+            "userId": userData.userId,
+            "createdDate": userData.createdDate,
+            "firstName": userData.firstName,
+            "lastName": userData.lastName,
+            "email": userData.email,
+            "phoneNumber": userData.phoneNumber,
+            "sxPoints": userData.sxPoints - total,
+            "userName": userData.userName,
+            "modifiedDate": date,
+            "password": userData.password
+        }
+        fetch('http://13.233.138.70:8080/orderFood', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(finalOrders)
+        }).catch((error) => console.log(error));
+        fetch('http://13.233.138.70:8080/updateUser', {
+            method: 'PUT',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(updateUser)
+        }).catch((error) => console.log(error));
+
+        updateUser.modifiedDate = 0;
+
+        navigation.navigate({
+            name: 'SmartXLiving',
+            params: { userData: updateUser },
+            merge: true
+        })
+    }
+
+
+    const checkOrders = (date) => {
         if (whenOrder == -1) {
             alert("Select when to Order");
+            return;
         }
+        let remainingPoints = userData.sxPoints - total;
+        if (remainingPoints < 0) {
+            alert("You don't have enough points.")
+            return;
+        }
+        if (setUserOrders != null || setUserOrders.length > 0) {
+            let flag = false
+            userOrders.forEach(element => {
+                if (element.whenOrder == whenOrder) {
+                    alert("You already selected your choice for " + (whenOrder == 0 ? "Breakfast" : whenOrder == 1 ? "Lunch" : "Dinner"))
+                    flag = true
+                }
+            });
+            if (flag)
+                return;
+        }
+        placeOrder();
     }
 
     const addQuantity = (item, index) => {
@@ -134,7 +216,7 @@ const OrderandReview = ({ navigation, route }) => {
                 <TouchableOpacity onPress={() => navigation.pop()}>
                     <Text style={styles.itemTitle}>Cancel</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={checkOrders}>
+                <TouchableOpacity onPress={() => checkOrders(date)}>
                     <Text style={styles.itemTitle}>Confirm Choice</Text>
                 </TouchableOpacity>
             </View>

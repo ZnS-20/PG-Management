@@ -1,4 +1,4 @@
-import { SafeAreaView, StyleSheet, FlatList, TouchableOpacity, Text, View, ActivityIndicator, Image } from 'react-native';
+import { SafeAreaView, StyleSheet, FlatList, TouchableOpacity, Text, View, ActivityIndicator } from 'react-native';
 import React, { useState, useEffect } from 'react';
 
 const Home = ({ navigation, route }) => {
@@ -8,6 +8,7 @@ const Home = ({ navigation, route }) => {
     const [data, setData] = useState([]);
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [userOrders, setUserOrders] = useState([]);
 
 
 
@@ -28,12 +29,20 @@ const Home = ({ navigation, route }) => {
                 .then((response) => response.json())
                 .then((json) => { setData(addQuantity(json)); setLoading(false) })
                 .catch((error) => console.log(error))
+            fetch(`http://13.233.138.70:8080/getOrdersByUserId?userId=${userData.userId}`)
+                .then((response) => response.json())
+                .then((json) => setUserOrders(json))
+                .catch((error) => console.log(error))
         });
 
         setLoading(true);
         fetch(`http://13.233.138.70:8080/getMenuByCategory?category=${category}`)
             .then((response) => response.json())
             .then((json) => { setData(addQuantity(json)); setLoading(false) })
+            .catch((error) => console.log(error))
+        fetch(`http://13.233.138.70:8080/getOrdersByUserId?userId=${userData.userId}`)
+            .then((response) => response.json())
+            .then((json) => setUserOrders(json))
             .catch((error) => console.log(error))
         return unsubscribe;
     }, [category, navigation]);
@@ -46,13 +55,12 @@ const Home = ({ navigation, route }) => {
         { id: 10, title: "Soup, Sides, Snack, Sweets & Cold Drink" }
     ];
 
-    const removeNullOrders = () => {
-        const filteredOrders = orders.filter(function (e) {
-            return e.quantity > 0;
-        })
-        console.log("In filteredOrders");
-        console.log(filteredOrders);
-        return filteredOrders;
+    const showOrders = () => {
+        if (userOrders.length <= 0) {
+            alert("You don't have any orders");
+        } else {
+            navigation.navigate('Previous Choices', { userOrders: userOrders });
+        }
     }
 
     const checkIfContains = (data) => {
@@ -60,7 +68,6 @@ const Home = ({ navigation, route }) => {
 
             if (orders[i].menu === data.menu) {
                 setOrders((orders) => orders.filter((order) => order.menu !== data.menu))
-                console.log(data.quantity)
                 return true
             }
         }
@@ -159,8 +166,15 @@ const Home = ({ navigation, route }) => {
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.userDetail}>
-                <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{userData.firstName} {userData.lastName}</Text>
-                <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{userData.sxPoints}</Text>
+                <View style={{ flex: 0.5, flexDirection: 'row', justifyContent: 'space-evenly' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{userData.firstName} {userData.lastName}</Text>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{userData.sxPoints}</Text>
+                </View>
+                <View style={{ flex: 0.5, flexDirection: 'row', justifyContent: 'space-evenly', borderWidth: 1, backgroundColor: '#D6D6D6' }}>
+                    <TouchableOpacity onPress={() => showOrders()}>
+                        <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Previous Choices</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
 
             <View style={styles.categoryList}>
@@ -179,6 +193,7 @@ const Home = ({ navigation, route }) => {
                     <FlatList
                         data={data}
                         renderItem={renderMenu}
+                        nestedScrollEnabled={true}
                         keyExtractor={(item) => { return item.id.toString() }}
                     />
                 </View>
@@ -186,7 +201,6 @@ const Home = ({ navigation, route }) => {
             <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', margin: 10, width: '98%' }}
                 disabled={orders.length == 0 ? true : false}
                 onPress={() => {
-                    console.log(orders);
                     navigation.navigate('Review and Confirm Choice', { userData: userData, orders: orders });
                 }}>
                 <View style={styles.titleView}>
