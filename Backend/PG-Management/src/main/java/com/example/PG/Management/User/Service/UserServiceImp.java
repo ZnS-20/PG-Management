@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -31,9 +33,10 @@ public class UserServiceImp implements UserService {
     }
 
     @Override
-    public ResponseEntity<String> orderFood(Orders order) {
+    public ResponseEntity<String> orderFood(List<Orders> orders) {
+
         try {
-            ordersInterface.save(order);
+            ordersInterface.saveAll(orders);
             return ResponseEntity.ok("Order Successfully placed");
         } catch (Exception e) {
             e.printStackTrace();
@@ -68,5 +71,27 @@ public class UserServiceImp implements UserService {
     public ResponseEntity<List<Menu>> getMenuByCategory(String category) {
         List<Menu> menu = menuRepository.findByCategory_Category(category);
         return ResponseEntity.ok(menu);
+    }
+
+    @Override
+    public ResponseEntity<List<Orders>> getOrdersByUserIdAndDate(Integer userId, Date finalDate) {
+        try {
+            List<Orders> orders = ordersInterface.findByOrderDateAndUserId_UserId(finalDate,userId);
+            return ResponseEntity.ok(orders);
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(new ArrayList<>());
+        }
+    }
+
+    @Override
+    public ResponseEntity<List<Orders>> getOrdersByUserId(Integer userId) {
+        try {
+            List<Orders> orders = ordersInterface.findByUserId_UserIdOrderByOrderDateDesc(userId);
+            return ResponseEntity.ok(orders);
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(new ArrayList<>());
+        }
     }
 }

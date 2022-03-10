@@ -20,4 +20,9 @@ public interface OrdersInterface extends JpaRepository<Orders,Integer> {
 
     List<Orders> findByUserId_UserId(int userId);
 
+    List<Orders> findByUserId_UserIdOrderByOrderDateDesc(int userId);
+
+    List<Orders> findByOrderDateAndUserId_UserId(@Param("orderDate")Date orderDate, @Param("userId")int userId);
+
+    List<Orders> findByOrderDate(@Param("orderDate") Date orderDate);
 }

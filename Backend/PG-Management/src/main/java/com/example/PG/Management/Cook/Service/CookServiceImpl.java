@@ -33,4 +33,10 @@ public class CookServiceImpl implements CookService{
         tempHashMap.clear();
         return orders;
     }
+
+    @Override
+    public List<Orders> getOrdersByDate(Date finalDate) {
+        List<Orders> orders = ordersInterface.findByOrderDate(finalDate);
+        return orders;
+    }
 }

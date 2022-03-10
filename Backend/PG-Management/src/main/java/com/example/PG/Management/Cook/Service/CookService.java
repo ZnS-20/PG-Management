@@ -9,4 +9,5 @@ public interface CookService {
 
     List<Orders> getAllOrders(Date orderDate, int whenOrder);
 
+    List<Orders> getOrdersByDate(Date finalDate);
 }

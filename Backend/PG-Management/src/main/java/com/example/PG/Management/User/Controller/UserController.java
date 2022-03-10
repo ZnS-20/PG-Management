@@ -10,8 +10,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 @RestController
 public class UserController {
@@ -33,7 +38,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/orderFood", method = RequestMethod.POST)
-    public ResponseEntity<String> orderFood(Orders order){
+    public ResponseEntity<String> orderFood(@RequestBody List<Orders> order){
         //Save login state in React state.
         if(order == null)
             return ResponseEntity.badRequest().body("Invalid Order: EMPTY");
@@ -46,6 +51,24 @@ public class UserController {
             return ResponseEntity.badRequest().body(new ArrayList<>());
         return userService.getMenuByCategory(category);
     }
+
+    @RequestMapping(value = "/getOrdersByUserIdAndDate", method = RequestMethod.GET)
+    public ResponseEntity<List<Orders>> getOrdersByUserIdAndDate(@RequestParam Integer userId, @RequestParam String date){
+        if(userId == null || date ==null)
+            return ResponseEntity.badRequest().body(new ArrayList<Orders>());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy", Locale.ENGLISH);
+        LocalDate formattedDate = LocalDate.parse(date, formatter);
+        Date finalDate = Date.from(formattedDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        return userService.getOrdersByUserIdAndDate(userId,finalDate);
+    }
+
+    @RequestMapping(value = "/getOrdersByUserId", method = RequestMethod.GET)
+    public ResponseEntity<List<Orders>> getOrdersByUserId(@RequestParam Integer userId){
+        if(userId == null)
+            return ResponseEntity.badRequest().body(new ArrayList<Orders>());
+        return userService.getOrdersByUserId(userId);
+    }
+
 
 
 }

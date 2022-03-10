@@ -27,4 +27,11 @@ public class CookController {
         return cookService.getAllOrders(finalDate,whenOrder);
     }
 
+    @GetMapping("/getOrdersByDate")
+    public List<Orders> getOrdersByDate(@RequestParam String date){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy", Locale.ENGLISH);
+        LocalDate formattedDate = LocalDate.parse(date, formatter);
+        Date finalDate = Date.from(formattedDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        return cookService.getOrdersByDate(finalDate);
+    }
 }
