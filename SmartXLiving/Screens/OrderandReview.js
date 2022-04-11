@@ -25,7 +25,7 @@ const OrderandReview = ({ navigation, route }) => {
 
     useEffect(() => {
         let formattedDate = (date.toISOString().split('T')[0]).split('-').reverse().join('-');
-        fetch(`http://13.233.138.70:8080/getOrdersByUserIdAndDate?userId=${userData.userId}&date=${formattedDate}`)
+        fetch(`http://13.127.27.128:8080/getOrdersByUserIdAndDate?userId=${userData.userId}&date=${formattedDate}`)
             .then((response) => response.json())
             .then((json) => { setUserOrders(json) })
             .catch((error) => console.log(error))
@@ -60,7 +60,7 @@ const OrderandReview = ({ navigation, route }) => {
             "modifiedDate": date,
             "password": userData.password
         }
-        fetch('http://13.233.138.70:8080/orderFood', {
+        fetch('http://13.127.27.128:8080/orderFood', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -68,7 +68,7 @@ const OrderandReview = ({ navigation, route }) => {
             },
             body: JSON.stringify(finalOrders)
         }).catch((error) => console.log(error));
-        fetch('http://13.233.138.70:8080/updateUser', {
+        fetch('http://13.127.27.128:8080/updateUser', {
             method: 'PUT',
             headers: {
                 Accept: 'application/json',

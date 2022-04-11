@@ -13,7 +13,7 @@ const Home = ({ navigation, route }) => {
 
 
 
-    addQuantity = (json) => {
+    const addQuantity = (json) => {
         for (let i = 0; i < json.length; i++) {
             Object.assign(json[i], { quantity: 0 });
         }
@@ -25,22 +25,22 @@ const Home = ({ navigation, route }) => {
             setOrders([]);
             setLoading(true);
             setCategory("Chicken")
-            fetch(`http://13.233.138.70:8080/getMenuByCategory?category=Chicken`)
+            fetch(`http://13.127.27.128:8080/getMenuByCategory?category=Chicken`)
                 .then((response) => response.json())
                 .then((json) => { setData(addQuantity(json)); setLoading(false) })
                 .catch((error) => console.log(error))
-            fetch(`http://13.233.138.70:8080/getOrdersByUserId?userId=${userData.userId}`)
+            fetch(`http://13.127.27.128:8080/getOrdersByUserId?userId=${userData.userId}`)
                 .then((response) => response.json())
                 .then((json) => setUserOrders(json))
                 .catch((error) => console.log(error))
         });
 
         setLoading(true);
-        fetch(`http://13.233.138.70:8080/getMenuByCategory?category=${category}`)
+        fetch(`http://13.127.27.128:8080/getMenuByCategory?category=${category}`)
             .then((response) => response.json())
             .then((json) => { setData(addQuantity(json)); setLoading(false) })
             .catch((error) => console.log(error))
-        fetch(`http://13.233.138.70:8080/getOrdersByUserId?userId=${userData.userId}`)
+        fetch(`http://13.127.27.128:8080/getOrdersByUserId?userId=${userData.userId}`)
             .then((response) => response.json())
             .then((json) => setUserOrders(json))
             .catch((error) => console.log(error))

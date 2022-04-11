@@ -13,7 +13,7 @@ const Login = ({ navigation }) => {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' }
         };
-        fetch(`http://13.233.138.70:8080/login?username=${username}&password=${password}`, requestOptions)
+        fetch(`http://13.127.27.128:8080/login?username=${username}&password=${password}`, requestOptions)
             .then(response => response.json())
             .then(data => {
                 setLoading(false);
