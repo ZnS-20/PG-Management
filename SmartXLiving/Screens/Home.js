@@ -21,26 +21,28 @@ const Home = ({ navigation, route }) => {
     }
 
     useEffect(() => {
+        setLoading(true);
+        let tempCategories = category;
+        tempCategories = category.replace('&', '%26');
         const unsubscribe = navigation.addListener('focus', () => {
             setOrders([]);
             setLoading(true);
             setCategory("Chicken")
-            fetch(`http://13.127.27.128:8080/getMenuByCategory?category=Chicken`)
+            fetch(`http://3.111.6.92:8080/getMenuByCategory?category=Chicken`)
                 .then((response) => response.json())
                 .then((json) => { setData(addQuantity(json)); setLoading(false) })
                 .catch((error) => console.log(error))
-            fetch(`http://13.127.27.128:8080/getOrdersByUserId?userId=${userData.userId}`)
+            fetch(`http://3.111.6.92:8080/getOrdersByUserId?userId=${userData.userId}`)
                 .then((response) => response.json())
                 .then((json) => setUserOrders(json))
                 .catch((error) => console.log(error))
         });
 
-        setLoading(true);
-        fetch(`http://13.127.27.128:8080/getMenuByCategory?category=${category}`)
+        fetch(`http://3.111.6.92:8080/getMenuByCategory?category=${tempCategories}`)
             .then((response) => response.json())
             .then((json) => { setData(addQuantity(json)); setLoading(false) })
             .catch((error) => console.log(error))
-        fetch(`http://13.127.27.128:8080/getOrdersByUserId?userId=${userData.userId}`)
+        fetch(`http://3.111.6.92:8080/getOrdersByUserId?userId=${userData.userId}`)
             .then((response) => response.json())
             .then((json) => setUserOrders(json))
             .catch((error) => console.log(error))

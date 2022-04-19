@@ -14,7 +14,7 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="SmartXLiving" component={Login} />
         <Stack.Screen name="SmartXLiving" component={Home} />
         <Stack.Screen name="Review and Confirm Choice" component={OrderandReview} />
         <Stack.Screen name="Previous Choices" component={AllOrders} />
